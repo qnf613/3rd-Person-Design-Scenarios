@@ -5,6 +5,8 @@ using UnityEngine;
 public class RigidbodyCharacterController : MonoBehaviour
 {
     [SerializeField] private float accelerationForce = 10;
+    [SerializeField] private float maxSpeed = 2;
+
     private new Rigidbody rb;
     private Vector2 input;
 
@@ -18,7 +20,11 @@ public class RigidbodyCharacterController : MonoBehaviour
     private void FixedUpdate()
     {
         var inputDirection = new Vector3(input.x, 0, input.y);
-        rb.AddForce(inputDirection * accelerationForce);
+        
+        if (rb.velocity.magnitude < maxSpeed)
+        {
+            rb.AddForce(inputDirection * accelerationForce);
+        }
     }
 
 
