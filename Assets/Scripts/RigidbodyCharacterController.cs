@@ -25,9 +25,9 @@ public class RigidbodyCharacterController : MonoBehaviour
         //detect the direction that camera is looking at
         Vector3 camFlattenedFoward = Camera.main.transform.forward;
         camFlattenedFoward.y = 0;
-        var camRotarion = Quaternion.LookRotation(camFlattenedFoward);
+        var camRotation = Quaternion.LookRotation(camFlattenedFoward);
         //calculate the direction that where player object suppose to go
-        Vector3 camRelativeInputDir = camRotarion * inputDirection;
+        Vector3 camRelativeInputDir = camRotation * inputDirection;
 
         //change the physics material depending on player's movement status
         collider.material = inputDirection.magnitude > 0 ? moving : stopping;
