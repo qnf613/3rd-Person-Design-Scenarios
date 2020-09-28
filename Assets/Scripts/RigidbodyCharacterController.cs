@@ -23,6 +23,12 @@ public class RigidbodyCharacterController : MonoBehaviour
     {
         var inputDirection = new Vector3(input.x, 0, input.y);
 
+        Vector3 camFlattenedFoward = Camera.main.transform.forward;
+        camFlattenedFoward.y = 0;
+        var camRotarion = Quaternion.LookRotation(camFlattenedFoward);
+
+        Vector3 camRelativeInputDir = camRotarion * inputDirection;
+
         collider.material = inputDirection.magnitude > 0 ? moving : stopping;
         //line 26 is simplified code writing of the line 28 to 35
         //if (inputDirection.magnitude > 0)
@@ -36,7 +42,7 @@ public class RigidbodyCharacterController : MonoBehaviour
 
         if (rb.velocity.magnitude < maxSpeed)
         {
-            rb.AddForce(inputDirection * accelerationForce, ForceMode.Acceleration);
+            rb.AddForce(camRelativeInputDir * accelerationForce, ForceMode.Acceleration);
         }
     }
 
