@@ -4,15 +4,19 @@ using UnityEngine;
 
 public class ContextualMessageTrigger : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public delegate void ConxtextualMessagedTriggeredAction();
+
+    public static event ConxtextualMessagedTriggeredAction ContextualMessageTriggered;
+
+    private void OnTriggerEnter(Collider other)
     {
-        
+        if (other.CompareTag("Player"))
+        {
+            if (ContextualMessageTriggered != null)
+            {
+                ContextualMessageTriggered.Invoke();
+            }
+        }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
