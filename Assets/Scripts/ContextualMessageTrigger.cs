@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class ContextualMessageTrigger : MonoBehaviour
 {
-    [SerializeField] private string message = "Defualt message";
+    [SerializeField] [TextArea (3,5)] private string message = "Defualt message";
     [SerializeField] private float messageDuration = 1.0f;
     public static event Action<string, float> ContextualMessageTriggered;
 
