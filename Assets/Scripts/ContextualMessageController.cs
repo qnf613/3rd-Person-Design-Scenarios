@@ -7,7 +7,6 @@ public class ContextualMessageController : MonoBehaviour
 {
     private CanvasGroup canvasGroup;
     private TMP_Text messageText;
-    [SerializeField] private float textDuration;
 
     private void Start()
     {
@@ -27,9 +26,9 @@ public class ContextualMessageController : MonoBehaviour
         canvasGroup.alpha = 0;
     }
 
-    private void OnContextualMessageTriggered()
+    private void OnContextualMessageTriggered(string message, float messageDuration)
     {
-        StartCoroutine(ShowMessage("Testing", textDuration));
+        StartCoroutine(ShowMessage(message, messageDuration));
     }
 
 
