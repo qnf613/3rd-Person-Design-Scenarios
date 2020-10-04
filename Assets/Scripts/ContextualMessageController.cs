@@ -15,9 +15,6 @@ public class ContextualMessageController : MonoBehaviour
         messageText = GetComponent<TMP_Text>();
 
         canvasGroup.alpha = 0;
-
-        //StartCoroutine(ShowMessage("Testing", textDuration));
-
     }
 
 
@@ -30,4 +27,20 @@ public class ContextualMessageController : MonoBehaviour
         canvasGroup.alpha = 0;
     }
 
+    private void OnContextualMessageTriggered()
+    {
+        StartCoroutine(ShowMessage("Testing", textDuration));
+    }
+
+
+    private void OnEnable()
+    {
+        ContextualMessageTrigger.ContextualMessageTriggered += OnContextualMessageTriggered;
+    }
+
+
+    private void OnDisable()
+    {
+        ContextualMessageTrigger.ContextualMessageTriggered -= OnContextualMessageTriggered;
+    }
 }
