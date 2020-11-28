@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -21,18 +22,46 @@ public class RigidbodyCharacterController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //detect the input direction
-        var inputDirection = new Vector3(input.x, 0, input.y);
-        //detect the direction that camera is looking at
-        Vector3 camFlattenedFoward = Camera.main.transform.forward;
-        camFlattenedFoward.y = 0;
-        var camRotation = Quaternion.LookRotation(camFlattenedFoward);
-        //calculate the direction that where player object suppose to go
-        Vector3 camRelativeInputDir = camRotation * inputDirection;
+        Vector3 camRelativeInputDir = GetCameraRlariveInputDir();
+        UpdatePhysicsMaterial();
+        Move(camRelativeInputDir);
+        RotateFacing(camRelativeInputDir);
+    }
 
-        //change the physics material depending on player's movement status
-        collider.material = inputDirection.magnitude > 0 ? moving : stopping;
-        //line 34 is simplified code writing of the line 36 to 43
+    /// <summary>
+    /// turn the character to face the direction it want to move in
+    /// </summary>
+    /// <param name="movementDir"></param>
+    private void RotateFacing(Vector3 movementDir)
+    {
+        if (movementDir.magnitude > 0)
+        {
+            var targetRotation = Quaternion.LookRotation(movementDir);
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, turnSpeed);
+
+        }
+    }
+
+    /// <summary>
+    /// moves the player in a direction based on its max speed and acceleration
+    /// </summary>
+    /// <param name="moveDir">the direction to move in.</param>
+    private void Move(Vector3 moveDir)
+    {
+        if (rb.velocity.magnitude < maxSpeed)
+        {
+            rb.AddForce(moveDir * accelerationForce, ForceMode.Acceleration);
+        }
+    }
+
+    /// <summary>
+    /// update the physics material to a low firiction option if the player is trying to move,
+    /// or higher friction option if they are trying to stop.
+    /// </summary>
+    private void UpdatePhysicsMaterial()
+    {
+        collider.material = input.magnitude > 0 ? moving : stopping;
+        //simpler version of these lines of code
         //if (inputDirection.magnitude > 0)
         //{
         //    collider.material = moving;
@@ -41,23 +70,29 @@ public class RigidbodyCharacterController : MonoBehaviour
         //{
         //    collider.material = stopping;
         //}
-
-        //add force to the player object in direction the camera is looking at
-        if (rb.velocity.magnitude < maxSpeed)
-        {
-            rb.AddForce(camRelativeInputDir * accelerationForce, ForceMode.Acceleration);
-        }
-
-        if (inputDirection.magnitude > 0)
-        {
-            //give us back the direction of player's moving to get the player to face the way they're moving
-            var targetRotation = Quaternion.LookRotation(camRelativeInputDir);
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, turnSpeed);
-
-        }
-
     }
 
+    /// <summary>
+    /// uses to input vector to create a cameara relative version
+    /// so the player can move based on the camera's foward.
+    /// </summary>
+    /// <returns>returns the camera relative input direction.</returns>
+    private Vector3 GetCameraRlariveInputDir()
+    {
+        var inputDirection = new Vector3(input.x, 0, input.y);
+        Vector3 camFlattenedFoward = Camera.main.transform.forward;
+        camFlattenedFoward.y = 0;
+        var camRotation = Quaternion.LookRotation(camFlattenedFoward);
+        Vector3 camRelativeInputDirToReturn = camRotation * inputDirection;
+
+        return camRelativeInputDirToReturn;
+    }
+
+    /// <summary>
+    /// this eveny handler is called from the playerInput component
+    /// using the new input system.
+    /// </summary>
+    /// <param name="context">Vector 2 representing move input.</param>
     public void OnMove(InputAction.CallbackContext context)
     {
         input = context.ReadValue<Vector2>();
