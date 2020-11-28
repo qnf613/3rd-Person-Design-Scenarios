@@ -14,10 +14,13 @@ public class RigidbodyCharacterController : MonoBehaviour
     private new Rigidbody rb;
     private new Collider collider;
     private Vector2 input;
+    private Animator animator;
+    private readonly int movementInputAnimParam = Animator.StringToHash("movementInput");
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
         collider = GetComponent<Collider>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     private void FixedUpdate()
@@ -38,7 +41,6 @@ public class RigidbodyCharacterController : MonoBehaviour
         {
             var targetRotation = Quaternion.LookRotation(movementDir);
             transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, turnSpeed);
-
         }
     }
 
@@ -96,11 +98,6 @@ public class RigidbodyCharacterController : MonoBehaviour
     public void OnMove(InputAction.CallbackContext context)
     {
         input = context.ReadValue<Vector2>();
+        animator.SetFloat(movementInputAnimParam, input.magnitude);
     }
-
-    //private void Update()
-    //{
-    //    input.x = Input.GetAxisRaw("Horizontal");
-    //    input.y = Input.GetAxisRaw("Vertical");
-    //}
 }
